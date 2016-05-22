@@ -1,0 +1,70 @@
+/*genaral*/
+*{
+    padding: 0;
+    margin: 0;
+    font-family: 微軟正黑體,Microsoft JhengHei,黑體,SimHei,標楷體,DFKai-SB,BiauKai,全字庫正楷體,TW-Kai,'Source Sans Pro', Helvetica, sans-serif;
+}
+
+/*layout*/
+#board{
+    width: 450px;
+    height: 450px;
+    margin: 0 auto;
+}
+
+/*board background*/
+#board-background{
+    width: 450px;
+    height: 450px;
+    position: relative;
+}
+#board-background .row{
+    display: block;
+    clear: both;
+}
+#board-background div{
+    float: left;
+    width: 49px;
+    height: 49px;
+    border-width: 1px;
+    border-color: black;
+    border-style: none solid solid none;
+}
+#board-background div.head-top{
+    border-top-style: solid;
+    height: 48px;
+}
+#board-background div.head-left{
+    border-left-style: solid;
+    width: 48px;
+}
+#board-background .space{
+    border: none;
+    width: 50px;
+    height: 50px;
+}
+#board-background .arc.left-top{
+    border-radius: 100% 0 0 0;
+    border-style: solid none none solid;
+}
+#board-background .arc.right-top{
+    border-radius: 0 100% 0 0;
+    border-style: solid solid none none;
+}
+#board-background .arc.right-bottom{
+    border-radius: 0 0 100% 0;
+    border-style: none solid solid none;
+}
+#board-background .arc.left-bottom{
+    border-radius: 0 0 0 100%;
+    border-style: none none solid solid;
+}
+#board-background .big{
+    width: 99px;
+    height: 99px;
+    position: absolute;
+}
+
+.circle{
+    border-radius: 50%;
+}

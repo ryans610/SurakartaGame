@@ -94,8 +94,38 @@
     float: left;
     width: 50px;
     height: 50px;
+    position: relative;
 }
-
-.circle{
+#board-control .chess.has-chess::after{
+    display: block;
+    content: "";
+    width: 25px;
+    height: 25px;
     border-radius: 50%;
+    position: absolute;
+    top: 11.5px;
+    left: 11.5px;
+    border: 1px solid black;
+}
+#board-control .chess.has-chess.black::after{
+    background: black;
+}
+#board-control .chess.has-chess.white::after{
+    background: white;
+}
+#board-control .chess.prompt:not(.has-chess)::after{
+    display: block;
+    content: "";
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    position: absolute;
+    top: 11.5px;
+    left: 11.5px;
+    background: rgba(0,255,255,0.5);
+}
+#board-control .chess.prompt.has-chess::after{
+    top: 7.5px;
+    left: 7.5px;
+    border: 5px solid rgba(0,255,255,0.5);
 }

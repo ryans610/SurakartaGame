@@ -65,23 +65,36 @@ var Board={
             }
         }
     },
-    hasChess:function(x,y){
-        return board[x][y].color;
-    },
     moveChess:function(x1,y1,x2,y2){
         var a=this.board[x1][y1];
         var b=this.board[x2][y2];
-        var index=-1;
-        for(var i=0;i<this.chess[a.color].length;i++){
-            if(this.chess[a.color][i].x==x1&&this.chess[a.color][i].y==y1){
-                index=i;
-                break;
-            }
-        }
+        var index=this.getChessIndex(a.color,x1,y1);
         b.setChess(a.color);
         this.chess[a.color][index]=b;
         a.clear();
     },
     eatChess:function(x1,y1,x2,y2){
+        var a=this.board[x1][y1];
+        var b=this.board[x2][y2];
+        var indexA=this.getChessIndex(a.color,x1,y1);
+        var indexB=this.getChessIndex(b.color,x2,y2);
+        this.chess[b.color].splice(indexB,1);
+        this.chess[a.color][indexA]=b;
+        b.clear();
+        b.setChess(a.color);
+        a.clear();
+    },
+    hasChess:function(x,y){
+        return board[x][y].color;
+    },
+    getChessIndex(color,x,y){
+        var index=-1;
+        for(var i=0;i<this.chess[color].length;i++){
+            if(this.chess[color][i].x==x&&this.chess[color][i].y==y){
+                index=i;
+                break;
+            }
+        }
+        return index;
     },
 };

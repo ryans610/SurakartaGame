@@ -84,10 +84,68 @@ var Board={
         b.setChess(a.color);
         a.clear();
     },
+    canDo:function(x1,y1,x2,y2){        //1 move,2 eat
+        if(!this.hasChess(x1,y1)){      //no chess
+            return 0;
+        }
+        if(!this.hasChess(x2,y2)){      //no chess
+            if(x1==x2){
+                if(Math.abs(y1-y2)==1){
+                    return 1;
+                }else{
+                    return 0;
+                }
+            }else if(y1==y2){
+                if(Math.abs(x1-x2)==1){
+                    return 1;
+                }else{
+                    return 0;
+                }
+            }else{
+                if(Math.abs(x1-x2)==1&&Math.abs(y1-y2)==1){
+                    return 1;
+                }else{
+                    return 0;
+                }
+            }
+        }else{                          //has chess
+            if(this.hasChess(x1,y1)==this.hasChess(x2,y2)){ //same color
+                return 0;
+            }
+
+        }
+    },
+    eatTravel:function(x,y,direction,arcs){     //direction 0~3:top,right,bottom,left
+        if (x==0&&y==0&&||
+            x==0&&y==5&&||
+            x==5&&y==0&&||
+            x==5&&y==5&&){    //corner
+            return {
+                x:x,
+                y,y,
+                arcs:0,
+            };
+        }
+        if(direction==0){   //top
+            var i=x;
+            while(i<6){
+                if(this.hasChess(i,y)){
+                    return {
+                        x:i,
+                        y:y,
+                        color:this.hasChess(i,y),
+                        arcs:arcs,
+                    };
+                }
+            }
+            //no chess
+            
+        }
+    },
     hasChess:function(x,y){
         return board[x][y].color;
     },
-    getChessIndex(color,x,y){
+    getChessIndex:function(color,x,y){
         var index=-1;
         for(var i=0;i<this.chess[color].length;i++){
             if(this.chess[color][i].x==x&&this.chess[color][i].y==y){
@@ -98,3 +156,6 @@ var Board={
         return index;
     },
 };
+
+//initial
+Board.init();

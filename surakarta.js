@@ -116,19 +116,34 @@ var Board={
         }
     },
     eatTravel:function(x,y,direction,arcs){     //direction 0~3:top,right,bottom,left
-        if (x==0&&y==0&&||
-            x==0&&y==5&&||
-            x==5&&y==0&&||
-            x==5&&y==5&&){    //corner
+        if (x==0&&y==0||
+            x==0&&y==5||
+            x==5&&y==0||
+            x==5&&y==5){    //corner
             return {
                 x:x,
-                y,y,
+                y:y,
                 arcs:0,
             };
         }
-        if(direction==0){   //top
-            var i=x;
+        if(direction==0){           //top
+            var i=y;
             while(i<6){
+                if(this.hasChess(x,i)){
+                    return {
+                        x:x,
+                        y:i,
+                        color:this.hasChess(x,i),
+                        arcs:arcs,
+                    };
+                }
+                i++;
+            }
+            //no chess
+            return this.eatTravel(i,x,x<=2?1:3,arcs+1);
+        }else if(direction==1){     //right
+            var i=x;
+            while(x<6){
                 if(this.hasChess(i,y)){
                     return {
                         x:i,
@@ -137,13 +152,44 @@ var Board={
                         arcs:arcs,
                     };
                 }
+                i++;
             }
             //no chess
-            
+            return this.eatTravel(y,i,y<=2?0:2,arcs+1);
+        }else if(direction==2){     //bottom
+            var i=y;
+            while(i>=0){
+                if(this.hasChess(x,i)){
+                    return {
+                        x:x,
+                        y:i,
+                        color:this.hasChess(x,i),
+                        arcs:arcs,
+                    };
+                }
+                i--;
+            }
+            //no chess
+            return this.eatTravel(i,x,x<=2?1:3,arcs+1);
+        }else if(direction==3){     //left
+            var i=x;
+            while(x>=0){
+                if(this.hasChess(i,y)){
+                    return {
+                        x:i,
+                        y:y,
+                        color:this.hasChess(i,y),
+                        arcs:arcs,
+                    };
+                }
+                i--;
+            }
+            //no chess
+            return this.eatTravel(y,i,y<=2?0:2,arcs+1);
         }
     },
     hasChess:function(x,y){
-        return board[x][y].color;
+        return this.board[x][y].color;
     },
     getChessIndex:function(color,x,y){
         var index=-1;

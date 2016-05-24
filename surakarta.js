@@ -40,6 +40,7 @@ var Board={
     //variable
     board:[],
     chess:[undefined,[],[]],
+    prompt:[],
     //method
     init:function(){
         //clear
@@ -145,7 +146,6 @@ var Board={
         //eat
         var t;
         t=this.eatTravel(x,y+1,0,0);
-        console.log(t);
         if(t.arcs&&t.color!=color){
             result.eat.push({
                 x:t.x,
@@ -153,7 +153,6 @@ var Board={
             });
         }
         t=this.eatTravel(x+1,y,1,0);
-        console.log(t);
         if(t.arcs&&t.color!=color){
             result.eat.push({
                 x:t.x,
@@ -161,7 +160,6 @@ var Board={
             });
         }
         t=this.eatTravel(x,y-1,2,0);
-        console.log(t);
         if(t.arcs&&t.color!=color){
             result.eat.push({
                 x:t.x,
@@ -169,7 +167,6 @@ var Board={
             });
         }
         t=this.eatTravel(x-1,y,3,0);
-        console.log(t);
         if(t.arcs&&t.color!=color){
             result.eat.push({
                 x:t.x,
@@ -329,7 +326,113 @@ var Board={
         }
         return index;
     },
+    promptChess(x,y){
+        this.prompt.push(this.board[x][y]);
+        this.board[x][y].prompt();
+    },
+    notPromptChess(x,y){
+        for(var i=0;i<this.prompt.length;i++){
+            if(this.prompt[i].x==x&&this.prompt[i].y==y){
+                this.prompt[i].notPrompt();
+                this.prompt.splice(i,1);
+                break;
+            }
+        }
+    },
 };
+
+//control
+var step=0;         //0~3,1 chose,1 do,2 chose,2 do
+var canDo;
+var choseChess={x:null,y:null};
+var eventList=[[],[],[]];
+
+function stepGo(){
+    step++;
+    if(step>3){
+        step=0;
+    }
+}
+function prompt(x,y){
+    return function(e){
+        Board.promptChess(x,y);
+    };
+}
+function notPrompt(x,y){
+    return function(e){
+        Board.notPromptChess(x,y);
+    };
+}
+function waitChose(){
+    var color=Math.floor(step/2)+1;
+    for(var i=0;i<Board.chess[color].length;i++){
+        var t=Board.chess[color][i];
+        eventList[0][i]=chose(t.x,t.y);
+        t.chess.addEventListener("click",eventList[0][i]);
+        eventList[1][i]=prompt(t.x,t.y);
+        t.chess.addEventListener("mouseenter",eventList[1][i]);
+        eventList[2][i]=notPrompt(t.x,t.y);
+        t.chess.addEventListener("mouseleave",eventList[2][i]);
+    }
+}
+function chose(x,y){
+    return function(e){
+        console.log("chose:"+x+","+y);
+        choseChess.x=x;
+        choseChess.y=y;
+        var color=Math.floor(step/2)+1;
+        for(var i=0;i<Board.chess[color].length;i++){
+            Board.chess[color][i].chess.removeEventListener("click",eventList[0][i]);
+            Board.chess[color][i].chess.removeEventListener("mouseenter",eventList[1][i]);
+            Board.chess[color][i].chess.removeEventListener("mouseleave",eventList[2][i]);
+        }
+        eventList[0].length=0;
+        eventList[1].length=0;
+        eventList[2].length=0;
+        canDo=Board.canDo(x,y);
+        for(var i=0;i<canDo.move.length;i++){
+            var t=Board.board[canDo.move[i].x][canDo.move[i].y];
+            prompt(t.x,t.y)(0);
+            eventList[0][i]=doTo(t.x,t.y,0);
+            t.chess.addEventListener("click",eventList[0][i]);
+        }
+        for(var i=0;i<canDo.eat.length;i++){
+            var t=Board.board[canDo.eat[i].x][canDo.eat[i].y];
+            prompt(t.x,t.y)(0);
+            eventList[1][i]=doTo(t.x,t.y,1);
+            t.chess.addEventListener("click",eventList[1][i]);
+        }
+        stepGo();
+    };
+}
+function doTo(x,y,action){          //action:0 move,1 eat
+    return function(e){
+        console.log("do:"+x+","+y+","+action);
+        for(var i=0;i<canDo.move.length;i++){
+            var t=Board.board[canDo.move[i].x][canDo.move[i].y];
+            notPrompt(t.x,t.y)(0);
+            t.chess.removeEventListener("click",eventList[0][i]);
+        }
+        for(var i=0;i<canDo.eat.length;i++){
+            var t=Board.board[canDo.eat[i].x][canDo.eat[i].y];
+            notPrompt(t.x,t.y)(0);
+            t.chess.removeEventListener("click",eventList[1][i]);
+        }
+        eventList[0].length=0;
+        eventList[1].length=0;
+        if(action==0){          //move
+            Board.moveChess(choseChess.x,choseChess.y,x,y);
+        }else if(action==1){    //eat
+            Board.eatChess(choseChess.x,choseChess.y,x,y)
+        }
+        choseChess.x=null;
+        choseChess.y=null;
+        canDo=undefined;
+        stepGo();
+        waitChose();
+    };
+}
 
 //initial
 Board.init();
+waitChose();

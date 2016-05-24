@@ -84,38 +84,35 @@ var Board={
         b.setChess(a.color);
         a.clear();
     },
-    canDo:function(x1,y1,x2,y2){        //1 move,2 eat
+    canMove:function(x1,y1,x2,y2){
         if(!this.hasChess(x1,y1)){      //no chess
-            return 0;
+            return false;
         }
-        if(!this.hasChess(x2,y2)){      //no chess
-            if(x1==x2){
-                if(Math.abs(y1-y2)==1){
-                    return 1;
-                }else{
-                    return 0;
-                }
-            }else if(y1==y2){
-                if(Math.abs(x1-x2)==1){
-                    return 1;
-                }else{
-                    return 0;
-                }
+        if(this.hasChess(x2,y2)){       //has chess
+            return false;
+        }
+        if(x1==x2){
+            if(Math.abs(y1-y2)==1){
+                return true;
             }else{
-                if(Math.abs(x1-x2)==1&&Math.abs(y1-y2)==1){
-                    return 1;
-                }else{
-                    return 0;
-                }
+                return false;
             }
-        }else{                          //has chess
-            if(this.hasChess(x1,y1)==this.hasChess(x2,y2)){ //same color
-                return 0;
+        }else if(y1==y2){
+            if(Math.abs(x1-x2)==1){
+                return true;
+            }else{
+                return false;
             }
-
+        }else{
+            if(Math.abs(x1-x2)==1&&Math.abs(y1-y2)==1){
+                return true;
+            }else{
+                return false;
+            }
         }
     },
     eatTravel:function(x,y,direction,arcs){     //direction 0~3:top,right,bottom,left
+        console.log(x+","+y+","+direction);
         if (x==0&&y==0||
             x==0&&y==5||
             x==5&&y==0||
@@ -139,11 +136,20 @@ var Board={
                 }
                 i++;
             }
+            i=5;
             //no chess
-            return this.eatTravel(i,x,x<=2?1:3,arcs+1);
+            var a,b;
+            if((x<=2&&i<=2)||(x>2&&i>2)){
+                a=i;
+                b=x;
+            }else{
+                a=5-i;
+                b=5-x;
+            }
+            return this.eatTravel(a,b,x<=2?1:3,arcs+1);
         }else if(direction==1){     //right
             var i=x;
-            while(x<6){
+            while(i<6){
                 if(this.hasChess(i,y)){
                     return {
                         x:i,
@@ -154,8 +160,17 @@ var Board={
                 }
                 i++;
             }
+            i=5;
             //no chess
-            return this.eatTravel(y,i,y<=2?0:2,arcs+1);
+            var a,b;
+            if((i<=2&&y<=2)||(i>2&&y>2)){
+                a=y;
+                b=i;
+            }else{
+                a=5-y;
+                b=5-i;
+            }
+            return this.eatTravel(a,b,y<=2?0:2,arcs+1);
         }else if(direction==2){     //bottom
             var i=y;
             while(i>=0){
@@ -169,11 +184,20 @@ var Board={
                 }
                 i--;
             }
+            i=0;
             //no chess
-            return this.eatTravel(i,x,x<=2?1:3,arcs+1);
+            var a,b;
+            if((x<=2&&i<=2)||(x>2&&i>2)){
+                a=i;
+                b=x;
+            }else{
+                a=5-i;
+                b=5-x;
+            }
+            return this.eatTravel(a,b,x<=2?1:3,arcs+1);
         }else if(direction==3){     //left
             var i=x;
-            while(x>=0){
+            while(i>=0){
                 if(this.hasChess(i,y)){
                     return {
                         x:i,
@@ -184,8 +208,17 @@ var Board={
                 }
                 i--;
             }
+            i=0;
             //no chess
-            return this.eatTravel(y,i,y<=2?0:2,arcs+1);
+            var a,b;
+            if((i<=2&&y<=2)||(i>2&&y>2)){
+                a=y;
+                b=i;
+            }else{
+                a=5-y;
+                b=5-i;
+            }
+            return this.eatTravel(a,b,y<=2?0:2,arcs+1);
         }
     },
     hasChess:function(x,y){

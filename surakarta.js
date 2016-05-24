@@ -47,6 +47,7 @@ var Board={
         this.board.length=0;
         this.chess[1].length=0;
         this.chess[2].length=0;
+        this.prompt.length=0;
         //init
         for(var i=0;i<=5;i++){
             this.board.push([]);
@@ -346,6 +347,7 @@ var step=0;         //0~3,1 chose,1 do,2 chose,2 do
 var canDo;
 var choseChess={x:null,y:null};
 var eventList=[[],[],[]];
+var useAI=[undefined,false,false];
 
 function stepGo(){
     step++;
@@ -432,7 +434,36 @@ function doTo(x,y,action){          //action:0 move,1 eat
         waitChose();
     };
 }
+function reset(){
+    for(var i=0;i<6;i++){
+        for(var j=0;j<6;j++){
+            var t=Board.board[i][j].chess;
+            var n=t.cloneNode();
+            t.parentNode.replaceChild(n,t);
+        }
+    }
+    Board.init();
+    step=0;
+    canDo=undefined;
+    choseChess.x=null;
+    choseChess.y=null;
+    eventList[0].length=0;
+    eventList[1].length=0;
+    eventList[2].length=0;
+    waitChose();
+}
+
+//AI control
 
 //initial
+document.getElementById("use-ai-1").addEventListener("change",function(){
+    useAI[1]=this.checked;
+    reset();
+});
+document.getElementById("use-ai-2").addEventListener("change",function(){
+    useAI[2]=this.checked;
+    reset();
+});
+document.getElementById("reset").addEventListener("click",reset);
 Board.init();
 waitChose();

@@ -84,6 +84,101 @@ var Board={
         b.setChess(a.color);
         a.clear();
     },
+    canDo:function(x,y){
+        var result={
+            move:[],
+            eat:[],
+        };
+        var color=this.hasChess(x,y);
+        if(!color){
+            return result;
+        }
+        //move
+        if(x>0&&y>0&&this.canMove(x,y,x-1,y-1)){
+            result.move.push({
+                x:x-1,
+                y:y-1,
+            });
+        }
+        if(x>0&&this.canMove(x,y,x-1,y)){
+            result.move.push({
+                x:x-1,
+                y:y,
+            });
+        }
+        if(x>0&&y<5&&this.canMove(x,y,x-1,y+1)){
+            result.move.push({
+                x:x-1,
+                y:y+1,
+            });
+        }
+        if(y<5&&this.canMove(x,y,x,y+1)){
+            result.move.push({
+                x:x,
+                y:y+1,
+            });
+        }
+        if(x<5&&y<5&&this.canMove(x,y,x+1,y+1)){
+            result.move.push({
+                x:x+1,
+                y:y+1,
+            });
+        }
+        if(x<5&&this.canMove(x,y,x+1,y)){
+            result.move.push({
+                x:x+1,
+                y:y,
+            });
+        }
+        if(x<5&&y>0&&this.canMove(x,y,x+1,y-1)){
+            result.move.push({
+                x:x+1,
+                y:y-1,
+            });
+        }
+        if(y>0&&this.canMove(x,y,x,y-1)){
+            result.move.push({
+                x:x,
+                y:y-1,
+            });
+        }
+        //eat
+        var t;
+        t=this.eatTravel(x,y+1,0,0);
+        console.log(t);
+        if(t.arcs&&t.color!=color){
+            result.eat.push({
+                x:t.x,
+                y:t.y,
+            });
+        }
+        t=this.eatTravel(x+1,y,1,0);
+        console.log(t);
+        if(t.arcs&&t.color!=color){
+            result.eat.push({
+                x:t.x,
+                y:t.y,
+            });
+        }
+        t=this.eatTravel(x,y-1,2,0);
+        console.log(t);
+        if(t.arcs&&t.color!=color){
+            result.eat.push({
+                x:t.x,
+                y:t.y,
+            });
+        }
+        t=this.eatTravel(x-1,y,3,0);
+        console.log(t);
+        if(t.arcs&&t.color!=color){
+            result.eat.push({
+                x:t.x,
+                y:t.y,
+            });
+        }
+        //return
+        return result;
+    },
     canMove:function(x1,y1,x2,y2){
         if(!this.hasChess(x1,y1)){      //no chess
             return false;
@@ -112,7 +207,7 @@ var Board={
         }
     },
     eatTravel:function(x,y,direction,arcs){     //direction 0~3:top,right,bottom,left
-        console.log(x+","+y+","+direction);
+        //console.log(x+","+y+","+direction);
         if (x==0&&y==0||
             x==0&&y==5||
             x==5&&y==0||

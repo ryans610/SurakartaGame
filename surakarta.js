@@ -327,11 +327,11 @@ var Board={
         }
         return index;
     },
-    promptChess(x,y){
+    promptChess:function(x,y){
         this.prompt.push(this.board[x][y]);
         this.board[x][y].prompt();
     },
-    notPromptChess(x,y){
+    notPromptChess:function(x,y){
         for(var i=0;i<this.prompt.length;i++){
             if(this.prompt[i].x==x&&this.prompt[i].y==y){
                 this.prompt[i].notPrompt();
